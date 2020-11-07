@@ -1,0 +1,103 @@
+---
+title: "Title"
+author: "Felix Golcher"
+date: "`r format(Sys.time(), '%d %B, %Y %H:%M')`"
+output:
+  bookdown::html_document2:
+    toc: true
+    toc_float: true
+    toc_depth: 6
+    number_sections: true
+    fig_caption: yes
+    table_caption: yes
+    df_print: "paged"
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+    toc_depth: 4
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE,
+                      autodep = TRUE)
+library(tidyverse)
+library(scales)
+```
+
+```{r defcontr}
+contr.sum.flx <- function(n, contrasts = TRUE, sparse = FALSE) 
+{
+    if (length(n) <= 1L) {
+        if (is.numeric(n) && length(n) == 1L && n > 1L) 
+            levels <- seq_len(n)
+        else stop("not enough degrees of freedom to define contrasts")
+    }
+    else levels <- n
+    levels <- as.character(levels)
+    cont <- diag(length(levels))
+    if (contrasts) {
+        cont <- cont[, -length(levels), drop = FALSE]
+        cont[length(levels), ] <- -1
+        colnames(cont) <- levels[-length(levels)]
+    }
+    cont
+}
+options(contrasts = c(unordered = "contr.sum.flx",
+                          ordered= "contr.poly"))
+```
+
+
+```{r}
+datcl <- read_csv2("data_competency levels.csv") %>% 
+  select(-Ballungsgebiete) %>% 
+  mutate(AoA = c("successive","simultaneous")[AoA+1])
+datcl %>% 
+  summarise(across(.fns = function(x)length(unique(x))))
+
+myw <- .5
+datcl %>% 
+  ggplot(aes(Klasse, Kompetenzstufe, col=factor(Literacy)))+
+  geom_count(alpha=.5, position = position_dodge(width=myw))+
+  stat_summary(fun = mean, geom=c("line"), position = position_dodge(width=myw))+
+  stat_summary(fun.data = mean_cl_boot, geom=c("pointrange"), position = position_dodge(width=myw))+
+  scale_x_continuous(breaks =1:3)+
+  facet_grid(AoA~L1, labeller = label_both)+
+  theme_minimal()
+```
+
+```{r}
+datpc <- read_csv2("data_percent correct.csv") %>% 
+  mutate(AoA = c("successive","simultaneous")[AoA+1])
+datpc %>% 
+  summarise(across(.fns = function(x)length(unique(x))))
+
+myw <- .5
+datpc %>% 
+  ggplot(aes(WORTTREFFER, GRAPHEMTREFFER))+
+  geom_count(alpha=.5, position = position_dodge(width=myw))
+datpc %>% 
+  ggplot(aes(O, M))+
+  geom_count(alpha=.5, position = position_dodge(width=myw))
+datpc %>% 
+  ggplot(aes(O, A))+
+  geom_count(alpha=.5, position = position_dodge(width=myw))
+```
+
+Just take Worttreffer. A is not nice.
+
+
+```{r}
+datt <- read_csv2("data_tvalues.csv") %>% 
+  mutate(AoA = c("successive","simultaneous")[AoA+1]) %>% 
+  select(-Ballungsgebiete, -starts_with("X"))
+datt %>% 
+  summarise(across(.fns = function(x)length(unique(x)))) %>% sort()
+hist(datt$M)
+hist(datt$GRAPHEMTREFFER)
+
+ggplot(datt, aes(Klasse, WORTTREFFER))+
+  geom_count()
+```
+
