@@ -1,0 +1,4 @@
+defcontr	[<-	&&	<=	==	>	as.character	c	colnames<-	diag	if	is.numeric	length	options	seq_len	stop
+unnamed-chunk-1	%>%	~	across	aes	AoA	Ballungsgebiete	c	facet_grid	factor	geom_count	ggplot	Klasse	Kompetenzstufe	label_both	length	Literacy	mean	mean_cl_boot	mutate	position_dodge	read_csv2	scale_x_continuous	select	stat_summary	summarise	theme_minimal	unique
+unnamed-chunk-2	%>%	A	across	aes	AoA	c	geom_count	ggplot	GRAPHEMTREFFER	length	M	mutate	O	position_dodge	read_csv2	summarise	unique	WORTTREFFER
+unnamed-chunk-3	%>%	$	across	aes	AoA	Ballungsgebiete	c	geom_count	ggplot	hist	Klasse	length	mutate	read_csv2	select	sort	starts_with	summarise	unique	WORTTREFFER
